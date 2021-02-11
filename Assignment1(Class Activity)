@@ -1,3 +1,22 @@
 ![WhatsApp Image 2021-02-11 at 4 26 44 PM](https://user-images.githubusercontent.com/55706171/107633972-a8e81200-6c8a-11eb-8379-e8eccf82ccb9.jpeg)
 ![WhatsApp Image 2021-02-11 at 4 26 43 PM](https://user-images.githubusercontent.com/55706171/107633840-7807dd00-6c8a-11eb-8c6b-ded9ae43041f.jpeg)
 
+
+
+CODE#
+
+
+import re
+
+
+regex = input("Enter Pattern: ")
+if regex.startswith('a') or regex.startswith('b'):
+    r = re.search(r'(^a|^b)(b|a|0|1|.|_)@(b|a|0|1|.)$', regex)
+    
+    if r:
+        print(r.groups())
+        print("[+] Correct Pattern")
+    else:
+        print("[-]  Wrong Pattern")
+else:
+    print(" The pattern should only start with a or b")
