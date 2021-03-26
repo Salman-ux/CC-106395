@@ -3,7 +3,7 @@
 StdID | Name
 ------------ | -------------
 *62636* | *Salman AHmad* 
-60826 | Muhammad Shuja
+60852 | Muhammad Shuja
 
 ## Language Selected ##
 
