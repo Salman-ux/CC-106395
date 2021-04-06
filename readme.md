@@ -7,105 +7,168 @@ StdID | Name
 
 ## Language Selected ##
 
-Mini C 
+Mini pascal
 
-## Example of main constructs ##
-
-int main(){
-
-} 
-
-## Example of for loop constructs ##
-
-for(int i=0;i<3;i++)
-{
-   printf("Welcome to CC Project");
-}
-
-## Example of if condition constructs ##
-  int a = 5;
-   int b = 20;
-   int c ;
-
-   if ( a && b ) {
-      printf("Line 1 - Condition is true\n" );
-   }
-	
-   if ( a || b ) {
-      printf("Line 2 - Condition is true\n" );
-   }
-   
-   /* lets change the value of  a and b */
-   a = 0;
-   b = 10;
-	
-   if ( a && b ) {
-      printf("Line 3 - Condition is true\n" );
-   } else {
-      printf("Line 3 - Condition is not true\n" );
-   }
-	
-   if ( !(a && b) ) {
-      printf("Line 4 - Condition is true\n" );
-   }
-	
-}
-
-## Example of while loop constructs ##
-
-i=1;
-while(i<=10)
-{
-  printf("%d ",i);
-  i++;
-} 
-
-## Example of array constructs ##
-
-float marks[3] = {97.5, 50.3, 80.7};
-
+#
+<program> ::=	program <identifier> ; <block> .
+<block> ::=	<variable declaration part>
+<procedure declaration part>
+<statement part>
+<variable declaration part> ::=	<empty> |
+var <variable declaration> ;
+    { <variable declaration> ; }
+<variable declaration> ::=	<identifier > { , <identifier> } : <type>
+<type> ::=	<simple type> | <array type>
+<array type> ::=	array [ <index range> ] of <simple type>
+<index range> ::=	<integer constant> .. <integer constant>
+<simple type> ::=	<type identifier>
+<type identifier> ::=	<identifier>
+<procedure declaration part> ::=	{ <procedure declaration> ; }
+<procedure declaration> ::=	procedure <identifier> ; <block>
+<statement part> ::=	<compound statement>
+<compound statement> ::=	begin <statement>{ ; <statement> } end
+<statement> ::=	<simple statement> | <structured statement>
+<simple statement> ::=	<assignment statement> | <procedure statement> |
+<read statement> | <write statement>
+<assignment statement> ::=	<variable> := <expression>
+<procedure statement> ::=	<procedure identifier>
+<procedure identifier> ::=	<identifier>
+<read statement> ::=	read ( <input variable> { , <input variable> } )
+<input variable> ::=	<variable>
+<write statement> ::=	write ( <output value> { , <output value> } )
+<output value> ::=	<expression>
+<structured statement> ::=	<compound statement> | <if statement> |
+<while statement>
+<if statement> ::=	if <expression> then <statement> |
+if <expression> then <statement> else <statement>
+<while statement> ::=	while <expression> do <statement>
+<expression> ::=	<simple expression> |
+<simple expression> <relational operator> <simple expression>
+<simple expression> ::=	<sign> <term> { <adding operator> <term> }
+<term> ::=	<factor> { <multiplying operator> <factor> }
+<factor> ::=	<variable> | <constant> | ( <expression> ) | not <factor>
+<relational operator> ::=	= | <> | < | <= | >= | >
+<sign> ::=	+ | - | <empty>
+<adding operator> ::=	+ | - | or
+<multiplying operator> ::=	* | div | and
+<variable> ::=	<entire variable> | <indexed variable>
+<indexed variable> ::=	<array variable> [ <expression> ]
+<array variable> ::=	<entire variable>
+<entire variable> ::=	<variable identifier>
+<variable identifier> ::=	<identifier>
 
 
 ## Lexical Specification ##
 
-
-1.program →declaration-list
-2.declaration-list → declaration-list declaration | declaration
-3.declaration → var-declaration | fun-declaration
-4.var-declaration → type-specifier ID; 
-5.type-specifier → int| void| float
-6.fun-declaration → type-specifier ID( params ) compound-stmt
-7.params → param-list |void| λ
-8.param-list → param-list, param | param
-9.param → type-specifier ID
-10.compound-stmt → {local-declarations statement-list}
-11.local-declarations →local-declarations var-declaration | λ
-12.statement-list → statement-list statement | λ
-13.statement → expression-stmt | compound-stmt | selection-stmt | iteration-stmt | jump-stmt
-14.expression-stmt → expression ;| ;
-15.selection-stmt → if(expression )statement 
-      |if ( expression)statement elsestatement
-16.iteration-stmt →while-statement | for-statement
-17.while-statement→ while ( expression )statement
-18.for-statement →for(expression;expression;expression)statement
-19.jump-stmt → return;| return expression;| break ;
-20.expression → id-assign=expression | simple-expression
-21.id-assign→ID
-22.simple-expression   → additive-expression relop additive-expression | additive-expression
-23.relop →<= | < | > | >= | == | !=|&&| ||
-24.additive-expression  → additive-expression addop term | term
-25.addop → + | -
-26.term → term mulop factor | factor
-27.mulop → *| /
-28.factor →(expression ) | id-assign| call | num
-29.call → ID(args )
-30.args → arg-list | λ
-31.arg-list → arg-list , expression | expression
-32.num →pos-num|neg-num
-33.pos-num→+value | value
-34.neg-num→-value
-35.value →INT_NUM|FLOAT_NUM
+program id ( identif ier list ) ;
+declarations
+subprogram declarations
+compound statement
+.
+identif ier list →
+id
+| identif ier list , id
+declarations →
+declarations var identif ier list : type ;
+| ²
+type →
+standard type
+| array [ num .. num ] of standard type
+standard type →
+integer
+| real
+subprogram declarations →
+subprogram declarations subprogram declarion ;
+| ²
+subprogram declaration →
+subprogram head declarations compound statement
+subprogram head →
+function id arguments : standard type ;
+| procedure id arguments ;
+arguments →
+( parameter list )
+| ²
+parameter list →
+identif ier list : type
+| parameter list ; identif ier list : type
+compound statement →
+begin
+optional statements
+end
+1
+optional statements →
+statement list
+| ²
+statement list →
+statement
+| statement list ; statement
+statement →
+variable assignop expression
+| procedure statement
+| compound statement
+| if expression then statement else statement
+| while expression do statement
+variable →
+id
+| id [ expression ]
+procedure statement →
+id
+| id ( expression list )
+expression list →
+expression
+| expression list , expression
+expression →
+simple expression
+| simple expression relop simple expression
+simple expression →
+term
+| sign term
+| simple expression addop term
+term →
+f actor
+| term mulop f actor
+f actor →
+id
+| id ( expression list )
+| num
+| ( expression )
+| not f actor
+sign →
++ | −
 
 
 ## Language CFG ##
-PROG -> LIB FUNCTION | ;
+<program> ::= "program" <id> ";" <block> "." 
+<declaration> ::= "var" <id> { , <id> } ":" <type> | 
+"procedure" <id> "(" parameters ")" ";" <block> | 
+"function" <id> "(" parameters ")" ":" <type> ";" <block> 
+<parameters> ::= [ "var" ] <id> ":" <type> { "," [ "var" ] <id> ":" <type> } | <empty> 
+<type> ::= <simple type> | <array type> 
+<array type> ::= "array" "[" [<integer expr>] "]" "of" <simple type>
+<simple type> ::= <type id> 
+<block> ::= "begin" <statement> { ";" <statement> } [ ";" ] "end" 
+<statement> ::= <simple statement> | <structured statement> | <declaration>
+<empty> ::=
+<simple statement> ::= <assignment statement> | <call> | <return statement> | 
+< read statement> | <write statement> | <assert statement> 
+<assignment statement> ::= <variable> ":=" <expr> 
+<call> ::= <id> "(" <arguments> ")" 
+<arguments> ::= expr { "," expr } | <empty> 
+<return statement> ::= "return" [ expr ] 
+<read statement> ::= "read" "(" <variable> { "," <variable> } ")" 
+<write statement> ::= "writeln" "(" <arguments> ")" 
+<assert statement> ::= "assert" "(" <Boolean expr> ")" 
+<structured statement> ::= <block> | <if statement> | <while statement> 
+<if statement> ::= "if" <Boolean expr> "then" <statement> | 
+"if" <Boolean expr> "then" <statement> "else" <statement> 
+<while statement> ::= "while" <Boolean expr> "do" <statement>
+<expr> ::= <simple expr> | 
+<simple expr> <relational operator> <simple expr> 
+<simple expr> ::= [ <sign> ] <term> { <adding operator> <term> } 
+<term> ::= <factor> { <multiplying operator> <factor> } 
+<factor> ::= <call> | <variable> | <literal> | "(" <expr> ")" | "not" <factor> | < factor> "." "size" 
+<variable> ::= <variable id> [ "[" <integer expr> "]" ] 
+<relational operator> ::= "=" | "<>" | "<" | "<=" | ">=" | ">" 
+<sign> ::= "+" | "-" 
+<adding operator> ::= "+" | "-" | "or" 
+<multiplying operator> ::= "*" | "/" | "%" | "and" 
