@@ -58,83 +58,25 @@ if <expression> then <statement> else <statement>
 <variable identifier> ::=	<identifier>
 
 
-## Lexical Specification ##
+## Lexical Grammar Of Mini Pascal ##
 
-program id ( identif ier list ) ;
-declarations
-subprogram declarations
-compound statement
-.
-identif ier list →
-id
-| identif ier list , id
-declarations →
-declarations var identif ier list : type ;
-| ²
-type →
-standard type
-| array [ num .. num ] of standard type
-standard type →
-integer
-| real
-subprogram declarations →
-subprogram declarations subprogram declarion ;
-| ²
-subprogram declaration →
-subprogram head declarations compound statement
-subprogram head →
-function id arguments : standard type ;
-| procedure id arguments ;
-arguments →
-( parameter list )
-| ²
-parameter list →
-identif ier list : type
-| parameter list ; identif ier list : type
-compound statement →
-begin
-optional statements
-end
-1
-optional statements →
-statement list
-| ²
-statement list →
-statement
-| statement list ; statement
-statement →
-variable assignop expression
-| procedure statement
-| compound statement
-| if expression then statement else statement
-| while expression do statement
-variable →
-id
-| id [ expression ]
-procedure statement →
-id
-| id ( expression list )
-expression list →
-expression
-| expression list , expression
-expression →
-simple expression
-| simple expression relop simple expression
-simple expression →
-term
-| sign term
-| simple expression addop term
-term →
-f actor
-| term mulop f actor
-f actor →
-id
-| id ( expression list )
-| num
-| ( expression )
-| not f actor
-sign →
-+ | −
+<id> ::= <letter> { <letter> | <digit> | "_" }
+<literal> ::= <integer literal> | <real literal> | <string literal>
+<integer literal> ::= <digits>
+<digits> ::= <digit> { <digit> }
+<real literal> ::= <digits> "." <digits> [ "e" [ <sign> ] <digits>]
+<string literal> ::= "\"" { < a char or escape char > } "\""
+<letter> ::= a | b | c | d | e | f | g | h | i | j | k | l | m | n | o |
+p | q | r | s | t | u | v | w | x | y | z | A | B | C |
+D | E | F | G | H | I | J | K | L | M | N | O | P
+| Q | R | S | T | U | V | W | X | Y | Z
+<digit> ::= 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+<special symbol or keyword> ::= "+" | "-" | "*" | "%" | "=" | "<>" | "<" | ">" | "<=" | ">=" |
+"(" | ")" | "[" | "]" | ":=" | "." | "," | ";" | ":" | "or" |
+"and" | "not" | "if" | "then" | "else" | "of" | "while" | "do" |
+"begin" | "end" | "var" | "array" | "procedure" |
+"function" | "program" | "assert"
+<predefined id> ::= "Boolean" | "false" | "integer" | "read" | "real" | "size" | "string" | "true" | "writeln"
 
 
 ## Language CFG ##
