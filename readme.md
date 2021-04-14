@@ -60,24 +60,23 @@ if <expression> then <statement> else <statement>
 
 ## Lexical Grammar Of Mini Pascal ##
 
-<id> ::= <letter> { <letter> | <digit> | "_" }
-<literal> ::= <integer literal> | <real literal> | <string literal>
-<integer literal> ::= <digits>
-<digits> ::= <digit> { <digit> }
-<real literal> ::= <digits> "." <digits> [ "e" [ <sign> ] <digits>]
-<string literal> ::= "\"" { < a char or escape char > } "\""
-<letter> ::= a | b | c | d | e | f | g | h | i | j | k | l | m | n | o |
+
+<constant> ::=	<integer constant> | <character constant> | <constant identifier>
+<constant identifier> ::=	<identifier>
+<identifier> ::=	<letter> { <letter or digit> }
+<integer constant> ::=	<digit> { <digit> }
+<character constant> ::=	'< any character other than '     >'  |  ''''
+<letter> ::=	a | b | c | d | e | f | g | h | i | j | k | l | m | n | o | 
 p | q | r | s | t | u | v | w | x | y | z | A | B | C |
 D | E | F | G | H | I | J | K | L | M | N | O | P
 | Q | R | S | T | U | V | W | X | Y | Z
-<digit> ::= 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
-<special symbol or keyword> ::= "+" | "-" | "*" | "%" | "=" | "<>" | "<" | ">" | "<=" | ">=" |
-"(" | ")" | "[" | "]" | ":=" | "." | "," | ";" | ":" | "or" |
-"and" | "not" | "if" | "then" | "else" | "of" | "while" | "do" |
-"begin" | "end" | "var" | "array" | "procedure" |
-"function" | "program" | "assert"
-<predefined id> ::= "Boolean" | "false" | "integer" | "read" | "real" | "size" | "string" | "true" | "writeln"
-
+<digit> ::=	0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+<special symbol> ::=	+ | - | * | = | <> | < | > | <= | >= |
+( | ) | [ | ] | := | . | , | ; | : | .. | div | or |
+and | not | if | then | else | of | while | do |
+begin | end | read | write | var | array |
+procedure | program
+<predefined identifier> ::=	integer | Boolean | true | false
 
 ## Language CFG ##
 <program> ::= "program" <id> ";" <block> "." 
