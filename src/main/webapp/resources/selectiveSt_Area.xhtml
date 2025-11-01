@@ -1,0 +1,534 @@
+<?xml version="1.0"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:fn="http://java.sun.com/jsp/jstl/functions">
+	<c:set var="consolidatePref" value="#{consolidatePaymentConf}"/>
+	<h:panelGroup id="poaConsSelectiveSt_Area">
+		<div id="selectiveSt_Area" class="payment-internal">
+		  <h:panelGroup ><!--  rendered="#{bean.statementEntriesAvailable}" -->
+			<div class="method-select row" style="width: 100%;padding-bottom: 20px;" id="statement">
+				<c:forEach
+					items="#{bean.assignmentId == -1 ? bean.listOfAllAssignmentFolios : bean.listOfAssignmentFolios}"
+					var="folios">
+					<h:panelGroup 
+						rendered="#{!bean.hideFolioInformation and bean.showFolioPanel(folios.reservationFolioId)}">
+						<div class="panel-group" style="width: 100%;">
+							<div class="panel panel-default">
+								<div class="panel-heading"
+									style="display: block !important; padding: 1px !important; font-size: 18px; cursor: pointer; margin-bottom: 5px">
+									<h4 class="panel-title">
+										<div data-toggle="collapse"
+											href="#collapse#{folios.reservationFolioId}-st"
+											id="statementView-collapse-icon#{folios.reservationFolioId}"
+											style="color: #fff; padding-left: 10px;"
+											onclick="onCollapseFoliosSection(#{folios.reservationFolioId},'statementView')">
+											<i class="icon-chevron-down"></i> #{folios.folioName}
+										</div>
+									</h4>
+								</div>
+								<div id="collapse#{folios.reservationFolioId}-st"
+									class="panel-collapse collapse in">
+									<div class="panel-body">
+										<div class="table-responsive">
+											<table class="table table-striped">
+												<thead>
+												<c:if test="#{not empty folios.poaStatementObj.statementEntries}">
+													<tr>
+														<th
+															style="background-color: #fff !important; color: #000 !important; font-weight: 700 !important; width: 122.16px;">Date</th>
+														<c:if test="#{consolidatePref.isShowTransRef()}">
+														<th
+															style="background-color: #fff !important; color: #000 !important; font-weight: 700 !important; width: 158.3px;">Trans/Ref</th></c:if>
+														<th
+															style="background-color: #fff !important; color: #000 !important; font-weight: 700 !important; width: 360.43px;">
+															<i class="fas fa-file-alt"></i> Description
+														</th>
+														<c:if test="#{consolidatePref.isShowAmount()}">
+														<th
+															style="background-color: #fff !important; color: #000 !important; font-weight: 700 !important; width: 144.49px;">Amount</th></c:if>
+														<c:if test="#{consolidatePref.isShowSurcharge()}">
+														<th
+															style="background-color: #fff !important; color: #000 !important; font-weight: 700 !important; width: 168.55px;">Surcharge</th></c:if>
+														<c:if test="#{consolidatePref.isShowSvcGrat()}">
+														<th
+															style="background-color: #fff !important; color: #000 !important; font-weight: 700 !important; width: 146.61px;">Svc/Grat</th></c:if>
+														<c:if test="#{consolidatePref.isShowTax()}">	
+														<th
+															style="background-color: #fff !important; color: #000 !important; font-weight: 700 !important; width: 122.16px;">Tax</th></c:if>
+														<th
+															style="background-color: #fff !important; color: #000 !important; font-weight: 700 !important; width: 144.51px;">Total</th>
+													</tr>
+												</c:if>
+												</thead>
+												<tbody>
+														<c:if
+															test="#{not empty folios.poaStatementObj.statementEntries}">
+															<c:forEach
+																items="#{folios.poaStatementObj.statementEntries}"
+																var="item">
+																<tr>
+																	<td style="border-left: 0px !important;"><h:outputText
+																			value="#{item.dateUI}" /></td>
+																		<c:if test="#{consolidatePref.isShowTransRef()}">
+																	<td style="border-left: 0px !important;"><h:panelGroup>
+																			<h:outputText value="#{item.transactionId}"
+																				rendered="#{item.transactionId gt 0}" />
+																		</h:panelGroup></td>
+																		</c:if>
+																	<td style="border-left: 0px !important;">
+														    		<p:commandLink actionListener="#{chitDetail.populateDetail}" update="@form:poaConPayFrom:chitDialog"
+														        	onstart="disableScroll();showLoader();" oncomplete="enableScroll();hideLoader();" style="color: black;">
+														       		<i class="fas fa-file-alt" style="margin-right: 5px;"></i>
+														        	<f:param name="transactionId" value="#{item.referenceId gt 0 and item.transactionType gt 0 ? item.referenceId : item.transactionId}" />
+														        	<f:param name="transactionType" value="#{item.transactionType}" />
+														        	<f:param name="moduleId" value="#{25}" />
+														        	<f:param name="tranIds" value="#{item.tranIdsForConsolidatePaymentOnStatement}"/>
+														          	</p:commandLink>
+														          <h:outputText value="#{item.description}" /></td>
+																	<c:if test="#{consolidatePref.isShowAmount()}">
+																	<td style="border-left: 0px !important;"><h:outputText
+																			value="#{item.amount}">
+																			<f:convertNumber type="currency"
+																				currencySymbol="#{util.getCurrencySymbol()}"
+																				maxFractionDigits="2"
+																				pattern="#{util.getDefaultNumberFormat()}" />
+																		</h:outputText></td>
+																		</c:if>
+																	<c:if test="#{consolidatePref.isShowSurcharge()}">
+																	<td style="border-left: 0px !important;"><h:outputText
+																			value="#{item.surcharge}">
+																			<f:convertNumber type="currency"
+																				currencySymbol="#{util.getCurrencySymbol()}"
+																				maxFractionDigits="2"
+																				pattern="#{util.getDefaultNumberFormat()}" />
+																		</h:outputText></td>
+																	</c:if>
+																	<c:if test="#{consolidatePref.isShowSvcGrat()}">
+																	<td style="border-left: 0px !important;"><h:outputText
+																			value="#{item.serviceCharge}">
+																			<f:convertNumber type="currency"
+																				currencySymbol="#{util.getCurrencySymbol()}"
+																				maxFractionDigits="2"
+																				pattern="#{util.getDefaultNumberFormat()}" />
+																		</h:outputText></td>
+																		</c:if>
+																		<c:if test="#{consolidatePref.isShowTax()}">
+																	<td style="border-left: 0px !important;"><h:outputText
+																			value="#{item.salesTax}">
+																			<f:convertNumber type="currency"
+																				currencySymbol="#{util.getCurrencySymbol()}"
+																				maxFractionDigits="2"
+																				pattern="#{util.getDefaultNumberFormat()}" />
+																		</h:outputText></td>
+																		</c:if>
+																	<td style="border-left: 0px !important;"><h:outputText
+																			value="#{entry.totalAmount}">
+																			<f:convertNumber type="currency"
+																				currencySymbol="#{util.getCurrencySymbol()}"
+																				maxFractionDigits="2"
+																				pattern="#{util.getDefaultNumberFormat()}" />
+																		</h:outputText> <h:outputText value="#{item.totalAmount}"
+																			rendered="#{!item.type.equals('property')}">
+																			<f:convertNumber type="currency"
+																				currencySymbol="#{util.getCurrencySymbol()}"
+																				maxFractionDigits="2"
+																				pattern="#{util.getDefaultNumberFormat()}" />
+																		</h:outputText></td>
+																</tr>
+															</c:forEach>
+														</c:if>
+														<c:if test="#{empty folios.poaStatementObj.statementEntries}">
+															<tbody>
+																<tr>
+																	<td colspan="5"
+																		style="text-align: center; border-left: 0px !important;">
+																		No Transactions and/or Balance Due</td>
+																</tr>
+															</tbody>
+														</c:if>
+													</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</h:panelGroup>
+				</c:forEach>
+				
+				<h:panelGroup 
+						rendered="#{bean.hideFolioInformation}">
+						<c:if
+															test="#{not empty bean.poaStatement.statementEntries}">
+															
+						<div class="panel-group" style="width: 100%;">
+							<div class="panel panel-default">
+									<div class="panel-body">
+										<div class="table-responsive">
+											<table class="table table-striped">
+												<thead>
+													<tr>
+														<th
+															style="background-color: #fff !important; color: #000 !important; font-weight: 700 !important; width: 122.16px;">Date</th>
+														<c:if test="#{consolidatePref.isShowTransRef()}">
+														<th
+															style="background-color: #fff !important; color: #000 !important; font-weight: 700 !important; width: 158.3px;">Trans/Ref</th></c:if>
+														<th
+															style="background-color: #fff !important; color: #000 !important; font-weight: 700 !important; width: 360.43px;">
+															<i class="fas fa-file-alt"></i> Description
+														</th>
+														<c:if test="#{consolidatePref.isShowAmount()}">
+														<th
+															style="background-color: #fff !important; color: #000 !important; font-weight: 700 !important; width: 144.49px;">Amount</th></c:if>
+														<c:if test="#{consolidatePref.isShowSurcharge()}">
+														<th
+															style="background-color: #fff !important; color: #000 !important; font-weight: 700 !important; width: 168.55px;">Surcharge</th></c:if>
+														<c:if test="#{consolidatePref.isShowSvcGrat()}">
+														<th
+															style="background-color: #fff !important; color: #000 !important; font-weight: 700 !important; width: 146.61px;">Svc/Grat</th></c:if>
+														<c:if test="#{consolidatePref.isShowTax()}">	
+														<th
+															style="background-color: #fff !important; color: #000 !important; font-weight: 700 !important; width: 122.16px;">Tax</th></c:if>
+														<th
+															style="background-color: #fff !important; color: #000 !important; font-weight: 700 !important; width: 144.51px;">Total</th>
+													</tr>
+												</thead>
+												<tbody>
+												
+												
+												<tr>
+															<td style="border-left: 0px !important;"></td>
+															<td style="border-left: 0px !important;"><h:panelGroup>
+																</h:panelGroup></td>
+															<td style="border-left: 0px !important;"><h:panelGroup>
+																	<i style="margin-right: 5px;"></i>
+																</h:panelGroup> <h:outputText value="Balance Forward" /> 
+															</td>
+															<c:if test="#{consolidatePref.isShowAmount()}">
+															<td style="border-left: 0px !important;"><h:outputText
+																	value="#{0.0}">
+																	<f:convertNumber type="currency"
+																		currencySymbol="#{util.getCurrencySymbol()}"
+																		maxFractionDigits="2"
+																		pattern="#{util.getDefaultNumberFormat()}" />
+																</h:outputText></td>
+															</c:if>
+															<c:if test="#{consolidatePref.isShowSurcharge()}">
+															<td style="border-left: 0px !important;"><h:outputText
+																	value="#{0.0}">
+																	<f:convertNumber type="currency"
+																		currencySymbol="#{util.getCurrencySymbol()}"
+																		maxFractionDigits="2"
+																		pattern="#{util.getDefaultNumberFormat()}" />
+																</h:outputText></td>
+															</c:if>
+															<c:if test="#{consolidatePref.isShowSvcGrat()}">		
+															<td style="border-left: 0px !important;"><h:outputText
+																	value="#{0.0}">
+																	<f:convertNumber type="currency"
+																		currencySymbol="#{util.getCurrencySymbol()}"
+																		maxFractionDigits="2"
+																		pattern="#{util.getDefaultNumberFormat()}" />
+																</h:outputText></td>
+															</c:if>
+															<c:if test="#{consolidatePref.isShowTax()}">		
+															<td style="border-left: 0px !important;"><h:outputText
+																	value="#{0.0}">
+																	<f:convertNumber type="currency"
+																		currencySymbol="#{util.getCurrencySymbol()}"
+																		maxFractionDigits="2"
+																		pattern="#{util.getDefaultNumberFormat()}" />
+																</h:outputText></td>
+															</c:if>
+															<td style="border-left: 0px !important;"><h:outputText
+																	value="#{bean.totalBalanceFwd}">
+																	<f:convertNumber type="currency"
+																		currencySymbol="#{util.getCurrencySymbol()}"
+																		maxFractionDigits="2"
+																		pattern="#{util.getDefaultNumberFormat()}" />
+																</h:outputText>
+																</td>
+														</tr>
+														
+													<c:forEach
+														items="#{bean.poaStatement.statementEntries}"
+														var="item">
+													<c:if
+														test="${(item.transactionId ne 0)}">
+														<tr>
+															<td style="border-left: 0px !important;"><h:outputText
+																	value="#{item.dateUI}" /></td>
+															<c:if test="#{consolidatePref.isShowTransRef()}">
+															<td style="border-left: 0px !important;"><h:panelGroup>
+																	<h:outputText value="#{item.transactionId}"
+																		rendered="#{item.transactionId gt 0}" />
+																</h:panelGroup></td>
+															</c:if>
+															<td style="border-left: 0px !important;">
+														    <p:commandLink actionListener="#{chitDetail.populateDetail}" update="@form"
+														        onstart="disableScroll();showLoader();" oncomplete="enableScroll();hideLoader();" style="color: black;">
+														        <i class="fas fa-file-alt" style="margin-right: 5px;"></i>
+														        <f:param name="transactionId" value="#{item.transactionId}" />
+														        <f:param name="transactionType" value="#{item.transactionType}" />
+														        <f:param name="moduleId" value="#{25}" />
+														        <f:param name="tranIds" value="#{item.tranIdsForConsolidatePaymentOnStatement}"/>
+														          </p:commandLink>
+														          <h:outputText value="#{item.description}" />
+															</td>
+															<c:if test="#{consolidatePref.isShowAmount()}">
+															<td style="border-left: 0px !important;"><h:outputText
+																	value="#{item.amount}">
+																	<f:convertNumber type="currency"
+																		currencySymbol="#{util.getCurrencySymbol()}"
+																		maxFractionDigits="2"
+																		pattern="#{util.getDefaultNumberFormat()}" />
+																</h:outputText></td>
+															</c:if>
+															<c:if test="#{consolidatePref.isShowSurcharge()}">
+															<td style="border-left: 0px !important;"><h:outputText
+																	value="#{item.surcharge}">
+																	<f:convertNumber type="currency"
+																		currencySymbol="#{util.getCurrencySymbol()}"
+																		maxFractionDigits="2"
+																		pattern="#{util.getDefaultNumberFormat()}" />
+																</h:outputText></td>
+															</c:if>
+															<c:if test="#{consolidatePref.isShowSvcGrat()}">
+															<td style="border-left: 0px !important;"><h:outputText
+																	value="#{item.serviceCharge}">
+																	<f:convertNumber type="currency"
+																		currencySymbol="#{util.getCurrencySymbol()}"
+																		maxFractionDigits="2"
+																		pattern="#{util.getDefaultNumberFormat()}" />
+																</h:outputText></td>
+															</c:if>
+															<c:if test="#{consolidatePref.isShowTax()}">
+															<td style="border-left: 0px !important;"><h:outputText
+																	value="#{item.salesTax}">
+																	<f:convertNumber type="currency"
+																		currencySymbol="#{util.getCurrencySymbol()}"
+																		maxFractionDigits="2"
+																		pattern="#{util.getDefaultNumberFormat()}" />
+																</h:outputText></td>
+															</c:if>
+															<td style="border-left: 0px !important;"><h:outputText
+																	value="#{entry.totalAmount}">
+																	<f:convertNumber type="currency"
+																		currencySymbol="#{util.getCurrencySymbol()}"
+																		maxFractionDigits="2"
+																		pattern="#{util.getDefaultNumberFormat()}" />
+																</h:outputText> <h:outputText value="#{item.totalAmount}"
+																	rendered="#{!item.type.equals('property')}">
+																	<f:convertNumber type="currency"
+																		currencySymbol="#{util.getCurrencySymbol()}"
+																		maxFractionDigits="2"
+																		pattern="#{util.getDefaultNumberFormat()}" />
+																</h:outputText></td>
+														</tr>
+													</c:if>
+												</c:forEach>
+												</tbody>
+											</table>
+										</div>
+								</div>
+							</div>
+						</div>
+				
+				</c:if>
+				</h:panelGroup>
+			<c:if test="#{consolidatePref.isShowAging()}">
+				<div class="panel-group"
+					style="width: 50%; padding: 0rem 1rem 0rem 0rem; margin-top: 12px;">
+					<div class="panel panel-default">
+						<div class="panel-heading"
+							style="display: block !important; padding: 1px !important; font-size: 18px;">
+							<h4 class="panel-title">
+								<div data-toggle="collapse" href="#collapse3-st"
+									id="statementView-collapse-icon3" style="color: #fff; padding-left: 10px;"
+									onclick="onCollapseIcon3Toggle('statementView')">
+									<i class="icon-chevron-down"></i> Aging
+								</div>
+							</h4>
+						</div>
+						<div id="collapse3-st" class="panel-collapse collapse in">
+							<div class="panel-body">
+								<div class="table-responsive">
+									<table class="table table-striped">
+										<thead>
+											<tr>
+												<th
+													style="background-color: #fff !important; color: #000 !important; font-weight: 700 !important;">Current</th>
+												<th
+													style="background-color: #fff !important; color: #000 !important; font-weight: 700 !important;">Over
+													30</th>
+												<th
+													style="background-color: #fff !important; color: #000 !important; font-weight: 700 !important;">Over
+													60</th>
+												<th
+													style="background-color: #fff !important; color: #000 !important; font-weight: 700 !important;">Over
+													90</th>
+												<th
+													style="background-color: #fff !important; color: #000 !important; font-weight: 700 !important;">Over
+													120</th>
+											</tr>
+										</thead>
+										<tbody>
+											<c:forEach items="#{bean.statementList}" var="item">
+												<tr>
+													<td style="border-left: 0px !important;"><h:outputText
+															value="#{item.currentBalance}">
+															<f:convertNumber type="currency"
+																currencySymbol="#{util.getCurrencySymbol()}"
+																maxFractionDigits="2"
+																pattern="#{util.getDefaultNumberFormat()}" />
+														</h:outputText></td>
+													<td style="border-left: 0px !important;"><h:outputText
+															value="#{item.over30}">
+															<f:convertNumber type="currency"
+																currencySymbol="#{util.getCurrencySymbol()}"
+																maxFractionDigits="2"
+																pattern="#{util.getDefaultNumberFormat()}" />
+														</h:outputText></td>
+													<td style="border-left: 0px !important;"><h:outputText
+															value="#{item.over60}">
+															<f:convertNumber type="currency"
+																currencySymbol="#{util.getCurrencySymbol()}"
+																maxFractionDigits="2"
+																pattern="#{util.getDefaultNumberFormat()}" />
+														</h:outputText></td>
+													<td style="border-left: 0px !important;"><h:outputText
+															value="#{item.over90}">
+															<f:convertNumber type="currency"
+																currencySymbol="#{util.getCurrencySymbol()}"
+																maxFractionDigits="2"
+																pattern="#{util.getDefaultNumberFormat()}" />
+														</h:outputText></td>
+													<td style="border-left: 0px !important;"><h:outputText
+															value="#{item.over120}">
+															<f:convertNumber type="currency"
+																currencySymbol="#{util.getCurrencySymbol()}"
+																maxFractionDigits="2"
+																pattern="#{util.getDefaultNumberFormat()}" />
+														</h:outputText></td>
+												</tr>
+											</c:forEach>
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</c:if>
+			<c:if test="#{consolidatePref.isShowMinimumInfo()}">
+				<div class="panel-group"
+					style="width: 50%; padding: 0rem 0rem 0rem 0rem; margin-top: 12px;">
+					<div class="panel panel-default">
+						<div class="panel-heading"
+							style="display: block !important; padding: 1px !important; font-size: 18px; margin-bottom: 5px; ">
+							<h4 class="panel-title">
+								<div data-toggle="collapse" href="#collapse4-st"
+									id="statementView-collapse-icon4" style="color: #fff; padding-left: 10px;"
+									onclick="onCollapseIcon4Toggle('statementView')">
+									<i class="icon-chevron-down"></i>
+									<i id="space" style="margin: 0 2px;"> </i>
+									<h:outputText value="#{consolidatePref.getMinimumPanelHeading()}"></h:outputText>
+								</div>
+							</h4>
+						</div>
+						<div id="collapse4-st" class="panel-collapse collapse in">
+							<div class="panel-body">
+								<div class="table-responsive">
+									<table class="table table-striped">
+										<thead>
+											<tr>
+												<th
+													style="background-color: #fff !important; color: #000 !important; font-weight: 700 !important;">Name</th>
+												<th
+													style="background-color: #fff !important; color: #000 !important; font-weight: 700 !important;">Minimum</th>
+												<th
+													style="background-color: #fff !important; color: #000 !important; font-weight: 700 !important;">Used</th>
+												<th
+													style="background-color: #fff !important; color: #000 !important; font-weight: 700 !important;">Remaining</th>
+												<th
+													style="background-color: #fff !important; color: #000 !important; font-weight: 700 !important;">Deadline</th>
+											</tr>
+										</thead>
+										<c:choose>
+											<c:when test="#{not empty bean.poaStatement.minimums}">
+												<tbody>
+													<c:forEach items="#{bean.poaStatement.minimums}"
+														var="minimum">
+														<tr>
+															<td style="border-left: 0px !important;">#{minimum.name}</td>
+															<td style="border-left: 0px !important;"><h:outputText
+																	value="#{minimum.obligation}">
+																	<f:convertNumber type="currency"
+																		currencySymbol="#{util.getCurrencySymbol()}"
+																		maxFractionDigits="2"
+																		pattern="#{util.getDefaultNumberFormat()}" />
+																</h:outputText></td>
+															<td style="border-left: 0px !important;"><h:outputText
+																	value="#{minimum.used}">
+																	<f:convertNumber type="currency"
+																		currencySymbol="#{util.getCurrencySymbol()}"
+																		maxFractionDigits="2"
+																		pattern="#{util.getDefaultNumberFormat()}" />
+																</h:outputText></td>
+															<td style="border-left: 0px !important;"><h:outputText
+																	value="#{minimum.remaining}">
+																	<f:convertNumber type="currency"
+																		currencySymbol="#{util.getCurrencySymbol()}"
+																		maxFractionDigits="2"
+																		pattern="#{util.getDefaultNumberFormat()}" />
+																</h:outputText></td>
+															<td style="border-left: 0px !important;"><h:outputText
+																	value="#{minimum.endDate}" /></td>
+														</tr>
+													</c:forEach>
+												</tbody>
+											</c:when>
+											<c:otherwise>
+												<tbody>
+													<tr>
+														<td colspan="5"
+															style="text-align: center; border-left: 0px !important;">No
+															Minimum Obligations</td>
+													</tr>
+												</tbody>
+											</c:otherwise>
+										</c:choose>
+									</table>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</c:if>
+				<h:panelGroup 
+						rendered="#{!bean.hideFolioInformation}">
+				<div class="row"
+					style="width: 100%; background-color: #e4e8f0; border-radius: 4px; margin-left: 3px; margin-top: 12px;">
+					<div class="col-md-6 col-sm-6">
+						<h4>Subtotal</h4>
+					</div>
+					<div class="col-md-6 col-sm-6 text-right">
+						<h4 class="text-right">
+								<h:outputText value="#{bean.gTotalOfStatementBalance}">
+									<f:convertNumber type="currency"
+										currencySymbol="#{util.getCurrencySymbol()}"
+										maxFractionDigits="2"
+										pattern="#{util.getDefaultNumberFormat()}" />
+								</h:outputText></h4>
+					</div>
+				</div>
+				</h:panelGroup>
+			</div>
+			</h:panelGroup>
+		</div>
+	</h:panelGroup>
+</ui:composition>
