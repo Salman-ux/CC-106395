@@ -202,8 +202,9 @@
 												
 												<tr>
 															<td style="border-left: 0px !important;"></td>
-															<td style="border-left: 0px !important;"><h:panelGroup>
-																</h:panelGroup></td>
+															<c:if test="#{consolidatePref.isShowTransRef()}">
+															<td style="border-left: 0px !important;"></td>
+															</c:if>
 															<td style="border-left: 0px !important;"><h:outputText value="Balance Forward" /></td>
 															<c:if test="#{consolidatePref.isShowAmount()}">
 															<td style="border-left: 0px !important;"><h:outputText
